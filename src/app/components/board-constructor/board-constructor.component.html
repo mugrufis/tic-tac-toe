@@ -1,0 +1,30 @@
+<div class="flexContainer">
+  <table id="ticTacToeTable">
+    <!--Could be done much simpler with bootstrap columns with width 4-->
+    <tr *ngFor="let row of rows ; index as selectedRow">
+      <td
+        class="ticTacToeSquare"
+        *ngFor="let column of rows ; index as selectedColumn"
+        (click)="onSquareClick(selectedRow, selectedColumn)"
+      >
+        <app-playsquare
+          [ngClass]="{paint: (elementsToPaint && elementsToPaint?.indexOf(selectedRow * boardDimentions + selectedColumn) !== -1)}"
+          [mark]="boardStatus[selectedRow * boardDimentions + selectedColumn]">
+        </app-playsquare>
+      </td>
+    </tr>
+  </table>
+
+
+
+</div>
+<div class="informationContainer">
+ <ng-container *ngIf="currentPlayer">
+   <p>Player <span class="markToPlay"> {{currentPlayer.mark}} </span> to play!</p>
+ </ng-container>
+  <ng-container *ngIf="!currentPlayer">
+    <p>We have a winner</p>
+  </ng-container>
+  <p>Player {{playerOne.mark}} has {{playerOne.wins}} wins</p>
+  <p>Player {{playerTwo.mark}} has {{playerTwo.wins}} wins</p>
+</div>

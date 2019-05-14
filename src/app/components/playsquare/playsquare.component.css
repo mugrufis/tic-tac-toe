@@ -1,0 +1,15 @@
+.playsquareInnerFrame {
+  width: 10vw;
+  height: 10vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.markStyling {
+  text-align: center;
+  font-size: 3vw;
+}
+
+.paint {
+  color: red;
+}

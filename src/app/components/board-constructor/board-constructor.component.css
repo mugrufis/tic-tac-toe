@@ -1,0 +1,30 @@
+#ticTacToeTable {
+  border-collapse: collapse;
+  border-style: hidden;
+}
+
+.ticTacToeSquare {
+  border: 1px solid black;
+}
+
+.flexContainer {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.informationContainer {
+  text-align: center;
+}
+
+.informationContainer p {
+  font-size: 1.5vw;
+}
+
+.markToPlay {
+  color: blue;
+}
+
+.paint {
+  color: red;
+}
