@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IPlayer} from "../../Interfaces/IPlayer";
-import {IBoardCoordinates} from "../../Interfaces/IBoardCoordinates";
-import {CheckWinConditionsService} from "../../services/check-win-conditions.service";
+import {IPlayer} from '../../Interfaces/IPlayer';
+import {IBoardCoordinates} from '../../Interfaces/IBoardCoordinates';
+import {CheckWinConditionsService} from '../../services/check-win-conditions.service';
 
 @Component({
   selector: 'app-board-constructor',
@@ -25,10 +25,15 @@ export class BoardConstructorComponent implements OnInit {
     return this._boardDimentions;
   }
 
+  // Typescript getter setter
+  // tslint:disable-next-line:variable-name
   private _boardDimentions;
   private playerOne: IPlayer;
   private playerTwo: IPlayer;
   private currentPlayer: IPlayer;
+
+  // Used to update the UI
+  // noinspection JSMismatchedCollectionQueryUpdate
   private elementsToPaint: number[];
 
 
@@ -61,12 +66,12 @@ export class BoardConstructorComponent implements OnInit {
     // Mark the selected square
     this.boardStatus[selectedRow * this.boardDimentions + selectedColumn] = this.currentPlayer.mark;
 
-  this.onPlayerPlayed({
+    this.onPlayerPlayed({
     boardStatus: this.boardStatus,
-    selectedColumn: selectedColumn,
-    selectedRow: selectedRow,
+    selectedColumn,
+    selectedRow,
     boardDimensions: this.boardDimentions
-  })
+  });
   }
 
   private resetBoard() {
@@ -93,7 +98,7 @@ export class BoardConstructorComponent implements OnInit {
     if (this.elementsToPaint) {
       this.currentPlayer.wins++;
       this.currentPlayer = undefined;
-      setTimeout(()=>{
+      setTimeout(() => {
         this.resetBoard();
         this.assignNextPlayer();
       }, 800);
@@ -102,7 +107,7 @@ export class BoardConstructorComponent implements OnInit {
 
     // If the game is a draw the starting player is random again
     if (boardCoordinates.boardStatus.join('').length === (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions)) {
-      setTimeout(()=>{
+      setTimeout(() => {
         this.resetBoard();
         this.assignRandomPlayerToStart();
       }, 800);
@@ -115,7 +120,7 @@ export class BoardConstructorComponent implements OnInit {
   }
 
   private getRandomPlayer(): IPlayer {
-    return (Math.floor(Math.random() * 2) + 1) == 1 ? this.playerOne : this.playerTwo;
+    return (Math.floor(Math.random() * 2) + 1) === 1 ? this.playerOne : this.playerTwo;
   }
 
   private findNextPlayer(): IPlayer {

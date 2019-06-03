@@ -1,6 +1,6 @@
 <div class="flexContainer">
   <table id="ticTacToeTable">
-    <!--Could be done much simpler with bootstrap columns with width 4-->
+    <!--TODO it using flexbox and one dimentional array-->
     <tr *ngFor="let row of rows ; index as selectedRow">
       <td
         class="ticTacToeSquare"
@@ -14,14 +14,12 @@
       </td>
     </tr>
   </table>
-
-
-
 </div>
+
 <div class="informationContainer">
- <ng-container *ngIf="currentPlayer">
-   <p>Player <span class="markToPlay"> {{currentPlayer.mark}} </span> to play!</p>
- </ng-container>
+  <ng-container *ngIf="currentPlayer">
+    <p>Player <span class="markToPlay"> {{currentPlayer.mark}} </span> to play!</p>
+  </ng-container>
   <ng-container *ngIf="!currentPlayer">
     <p>We have a winner</p>
   </ng-container>

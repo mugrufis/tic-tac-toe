@@ -6,8 +6,8 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./playsquare.component.css']
 })
 export class PlaysquareComponent implements OnInit {
-  @Input() paint: boolean = false;
-  @Input() set mark(newValue: string){
+  @Input() paint = false;
+  @Input() set mark(newValue: string) {
     this._mark = newValue;
     this.paint = false;
   }
@@ -16,6 +16,7 @@ export class PlaysquareComponent implements OnInit {
     return this._mark;
   }
 
+  // tslint:disable-next-line
   private _mark= '';
 
   constructor() { }
