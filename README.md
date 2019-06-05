@@ -1,6 +1,10 @@
 # tic_tac_toe
 
-Coding Challenge for Frontend Developers
+_The following challenge was part of a job interview._
+
+_The initial commit is the submited code._
+
+Coding Challenge for Frontend Developers 
 
 
 Create a TicTacToe game in Angular 6 or above!
@@ -20,3 +24,17 @@ The app keeps track of the win count for each player during its life cycle (Once
 * Implement the game mechanics using a reasonable organization of components and/or services
 * Write a complete unit test for at least one component or service
 * Style the app at your own discretion
+
+## My Approach
+
+The board is modelled as a one dimensional array.
+ 
+For example a classic 3x3 tic-tac-toe game (a draw in this case) would be 
+
+['X','O','X',
+
+ 'X','O','X',
+
+ 'O','X','O']
+
+The win conditions and board generation support all board sizes greater than 2 by 2 .
