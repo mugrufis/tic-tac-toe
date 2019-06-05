@@ -22,10 +22,9 @@ export class CheckWinConditionsService {
         ||  this.checkWinHorizontal(boardCoordinates)
         || this.checkWinVertical(boardCoordinates)
         || this.checkWinDiagonallyRight(boardCoordinates);
-
     }
 
-    // if the clicked square not diagonal one
+    // if the clicked square not diagonal one.
     return this.checkWinHorizontal(boardCoordinates) || this.checkWinVertical(boardCoordinates);
   }
 

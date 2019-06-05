@@ -1,13 +1,13 @@
 .playsquareInnerFrame {
-  width: 10vw;
-  height: 10vw;
+  width: 150px;
+  height: 150px;
   overflow: hidden;
   position: relative;
 }
 
 .markStyling {
   text-align: center;
-  font-size: 3vw;
+  font-size: 50px;
 }
 
 .paint {

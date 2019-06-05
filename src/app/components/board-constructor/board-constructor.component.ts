@@ -12,10 +12,10 @@ export class BoardConstructorComponent implements OnInit {
   @Input()
   public set boardDimentions(newValue) {
     this._boardDimentions = newValue;
-    if (!newValue || newValue % 2 !== 1 || newValue === 1) {
+    if (!newValue || !Number.isInteger(newValue) || newValue === 1) {
       this.boardStatus = [];
       this.rows = [];
-      console.error('An odd value greater than 1 is needed to displaye the board.');
+      console.error('A value greater than 1 is needed to display the board.');
       return;
     }
     this.rows = new Array(newValue);
