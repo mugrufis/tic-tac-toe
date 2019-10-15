@@ -1,0 +1,24 @@
+<div class="gameOptionWrapper">
+  <div class="gameOption">
+    Board Dimentions*: <input type="number" min="3" (change)="onSetBoardDimentions($event)">
+  </div>
+  <div class="gameOption">
+    <button [ngClass]="{gameModeBtn: true, blueBorder: gameOptions.numberOfPlayers === 2 }" (click)="onSetNumberOfPlayers(2)">Player VS Player</button>
+    <button [ngClass]="{gameModeBtn: true, blueBorder: gameOptions.numberOfPlayers === 1 }" (click)="onSetNumberOfPlayers(1)">Player VS Computer</button>
+  </div>
+  <div *ngIf="gameOptions.numberOfPlayers === 1" class="gameOption">
+    <select (change)="onSetComputerLevel($event)">
+      <option>Select difficulty</option>
+      <option value="1">Easy</option>
+      <option value="2">Normal</option>
+      <option value="3">Unbeatable</option>
+    </select>
+  </div>
+
+  <div class="gameOption">
+    <button
+      [disabled]="!gameOptions.boardDimentions"
+      (click)="onStartGame()">Start Game
+    </button>
+  </div>
+</div>

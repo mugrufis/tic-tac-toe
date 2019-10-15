@@ -1,0 +1,16 @@
+.gameOptionWrapper {
+  margin-top: 20vh;
+}
+
+.gameOption {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.gameModeBtn {
+  margin: 0 10px 0 10px;
+}
+
+.blueBorder {
+  border: 2px solid blue;
+}
