@@ -1,3 +1,14 @@
-<div id="boardConstructor">
-  <app-board-constructor  [boardDimentions]="6"></app-board-constructor>
+<div id="boardConstructor" *ngIf="gameOptions && !showOptions">
+  <app-board-constructor [gameOptions]="gameOptions"></app-board-constructor>
+</div>
+<div>
+  <app-game-options *ngIf="!gameOptions || showOptions" (startGame)="onStartGame($event)"></app-game-options>
+</div>
+
+<!--todo make this decent-->
+<div style="text-align: center; margin-top: 40px" *ngIf="!showOptions">
+  Game
+  <button (click)="onShowOptions()">Settings</button>
+  <br>
+  Proggress will be lost
 </div>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {IBoardCoordinates} from '../Interfaces/IBoardCoordinates';
 
 @Injectable({
@@ -6,46 +6,52 @@ import {IBoardCoordinates} from '../Interfaces/IBoardCoordinates';
 })
 export class CheckWinConditionsService {
 
-  constructor() { }
+  constructor() {
+  }
+
+  public checkForDraw(boardCoordinates: IBoardCoordinates): boolean {
+    return !this.findNumberPresenceInTheArray(boardCoordinates.boardStatus);
+  }
+
+  private findNumberPresenceInTheArray(arr: string[]) {
+    for (const item of arr) {
+      if (Number(item)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   public checkWinConditions(boardCoordinates: IBoardCoordinates): number[] {
-    // if a player can not have enough marks to win return false
-    if (boardCoordinates.boardStatus.join('').length < boardCoordinates.boardDimensions * 2 - 1) {
-      return;
-    }
+    // todo if a player can not have enough marks to win return false
+    // if (boardCoordinates.boardStatus.join('').length < boardCoordinates.boardDimensions * 2 - 1) {
+    //   return;
+    // }
 
-    // if the clicked square is a diagonal one
-    if (boardCoordinates.selectedColumn === boardCoordinates.selectedRow ||
-      boardCoordinates.selectedRow + boardCoordinates.selectedColumn === boardCoordinates.boardDimensions - 1
-    ) {
-      return this.checkWinDiagonallyLeft(boardCoordinates)
-        ||  this.checkWinHorizontal(boardCoordinates)
-        || this.checkWinVertical(boardCoordinates)
-        || this.checkWinDiagonallyRight(boardCoordinates);
-    }
-
-    // if the clicked square not diagonal one.
-    return this.checkWinHorizontal(boardCoordinates) || this.checkWinVertical(boardCoordinates);
+    return this.checkWinHorizontal(boardCoordinates)
+      || this.checkWinVertical(boardCoordinates)
+      || this.checkWinDiagonallyRight(boardCoordinates)
+      || this.checkWinDiagonallyLeft(boardCoordinates);
   }
 
   private checkWinHorizontal(boardCoordinates: IBoardCoordinates): number[] {
-    const lineStartIndex: number = boardCoordinates.selectedRow * boardCoordinates.boardDimensions;
+    const rowStartIndex: number = Math.floor(
+      boardCoordinates.selectedIndex / boardCoordinates.boardDimensions) * boardCoordinates.boardDimensions;
+    const rowElements: number[] = [];
 
-    // This can be done better but no internet connection to check how
-    const lineElements: number[] = [];
-    for (let i = lineStartIndex; i < boardCoordinates.boardDimensions + lineStartIndex; i++) {
-      lineElements.push(i);
+    for (let i = rowStartIndex; i < boardCoordinates.boardDimensions + rowStartIndex; i++) {
+      rowElements.push(i);
     }
 
-    return this.checkIndexesForEquality(lineElements, boardCoordinates.boardStatus);
+    return this.checkIndexesForEquality(rowElements, boardCoordinates.boardStatus);
   }
 
   private checkWinVertical(boardCoordinates: IBoardCoordinates): number[] {
-    // This can be done better but no internet connection to check how
+    const columnIndex: number = boardCoordinates.selectedIndex % boardCoordinates.boardDimensions;
     const columnElements: number[] = [];
 
     // boardCoordinates.boardDimensions ^ 2 does not work for some reason
-    for (let i = boardCoordinates.selectedColumn;
+    for (let i = columnIndex;
          i < (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions);
          i += boardCoordinates.boardDimensions) {
       columnElements.push(i);
@@ -55,19 +61,17 @@ export class CheckWinConditionsService {
   }
 
   private checkWinDiagonallyLeft(boardCoordinates: IBoardCoordinates): number[] {
-    // This can be done better but no internet connection to check how
     const diagonalElementsLeft: number[] = [];
-    for (let i = 0; i < (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions ); i += boardCoordinates.boardDimensions + 1) {
+    for (let i = 0; i < (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions); i += boardCoordinates.boardDimensions + 1) {
       diagonalElementsLeft.push(i);
     }
     return this.checkIndexesForEquality(diagonalElementsLeft, boardCoordinates.boardStatus);
   }
 
   private checkWinDiagonallyRight(boardCoordinates: IBoardCoordinates): number[] {
-    // This can be done better but no internet connection to check how
     const diagonalElementsRight: number[] = [];
     for (let i = boardCoordinates.boardDimensions - 1;
-         i < (boardCoordinates.boardDimensions  * boardCoordinates.boardDimensions) - 1;
+         i < (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions) - 1;
          i += boardCoordinates.boardDimensions - 1) {
       diagonalElementsRight.push(i);
     }

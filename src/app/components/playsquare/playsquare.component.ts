@@ -7,7 +7,13 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class PlaysquareComponent implements OnInit {
   @Input() paint = false;
+
   @Input() set mark(newValue: string) {
+    if (Number(newValue) || newValue === '0') {
+      this._mark = '';
+      return;
+    }
+
     this._mark = newValue;
     this.paint = false;
   }
@@ -17,9 +23,10 @@ export class PlaysquareComponent implements OnInit {
   }
 
   // tslint:disable-next-line
-  private _mark= '';
+  private _mark = '';
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

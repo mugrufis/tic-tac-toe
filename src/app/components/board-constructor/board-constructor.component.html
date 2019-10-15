@@ -1,15 +1,14 @@
 <div class="flexContainer">
   <table id="ticTacToeTable">
-    <!--TODO it using flexbox and one dimentional array-->
     <tr *ngFor="let row of rows ; index as selectedRow">
       <td
         class="ticTacToeSquare"
         *ngFor="let column of rows ; index as selectedColumn"
-        (click)="onSquareClick(selectedRow, selectedColumn)"
+        (click)="onSquareClick(selectedRow * this.gameOptions.boardDimentions + selectedColumn)"
       >
         <app-playsquare
-          [ngClass]="{paint: (elementsToPaint && elementsToPaint?.indexOf(selectedRow * boardDimentions + selectedColumn) !== -1)}"
-          [mark]="boardStatus[selectedRow * boardDimentions + selectedColumn]">
+          [ngClass]="{paint: (winningGroupIndexes && winningGroupIndexes?.indexOf(selectedRow * gameOptions.boardDimentions + selectedColumn) !== -1)}"
+          [mark]="currentBoardOverview[selectedRow * gameOptions.boardDimentions + selectedColumn]">
         </app-playsquare>
       </td>
     </tr>
@@ -23,6 +22,6 @@
   <ng-container *ngIf="!currentPlayer">
     <p>We have a winner</p>
   </ng-container>
-  <p>Player {{playerOne.mark}} has {{playerOne.wins}} wins</p>
-  <p>Player {{playerTwo.mark}} has {{playerTwo.wins}} wins</p>
+  <p>Player {{playerOne?.mark}} has {{playerOne?.wins}} wins</p>
+  <p>Player {{playerTwo?.mark}} has {{playerTwo?.wins}} wins</p>
 </div>

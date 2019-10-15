@@ -1,101 +1,125 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {IPlayer} from '../../Interfaces/IPlayer';
 import {IBoardCoordinates} from '../../Interfaces/IBoardCoordinates';
 import {CheckWinConditionsService} from '../../services/check-win-conditions.service';
+import {IGameOptions} from '../../Interfaces/IGameOptions';
+import {EasyComputerAIService} from '../../services/computerAI/easy-computer-ai.service';
+import {NormalComputerAIService} from '../../services/computerAI/normal-computer-ai.service';
+import {UnbeatableComputerAIService} from '../../services/computerAI/unbeatable-computer-ai.service';
 
 @Component({
   selector: 'app-board-constructor',
   templateUrl: './board-constructor.component.html',
   styleUrls: ['./board-constructor.component.css']
 })
-export class BoardConstructorComponent implements OnInit {
+export class BoardConstructorComponent implements OnInit, OnChanges {
   @Input()
-  public set boardDimentions(newValue) {
-    this._boardDimentions = newValue;
-    if (!newValue || !Number.isInteger(newValue) || newValue === 1) {
-      this.boardStatus = [];
-      this.rows = [];
-      console.error('A value greater than 1 is needed to display the board.');
-      return;
-    }
-    this.rows = new Array(newValue);
-  }
+  public gameOptions: IGameOptions;
 
-  public get boardDimentions() {
-    return this._boardDimentions;
-  }
+  // A string array representing the board. Numbers go letft to right top to bottom
+  private currentBoardOverview: string[] = [];
 
-  // Typescript getter setter
-  // tslint:disable-next-line:variable-name
-  private _boardDimentions;
   private playerOne: IPlayer;
   private playerTwo: IPlayer;
   private currentPlayer: IPlayer;
 
   // Used to update the UI
   // noinspection JSMismatchedCollectionQueryUpdate
-  private elementsToPaint: number[];
-
+  private winningGroupIndexes: number[];
 
   // A hack to generate an array with the correct number of indexes for the ngfor to work.
-  // Used because the boardStatus array often changes and the board would be redraw every time.
+  // Basing the html layout on rows instead of currentBoardOverview is done
+  // to remove the redrawing of the board that would occur by each change of currentBoardOverview
   private rows = [];
-  // A string array representing the board. Numbers go letft to right top to bottom
-  private boardStatus: string[] = [];
 
   constructor(
-    private checkWinConditionsService: CheckWinConditionsService
+    private checkWinConditionsService: CheckWinConditionsService,
+    private easyComputerAIService: EasyComputerAIService,
+    private normalComputerAIService: NormalComputerAIService,
+    private unbeatableComputerAIService: UnbeatableComputerAIService
   ) {
   }
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes.gameOptions.currentValue) {
+      return;
+    }
+
+    this.rows = new Array(Number(this.gameOptions.boardDimentions));
+
+    for (let i = 0; i < this.gameOptions.boardDimentions * this.gameOptions.boardDimentions; i++) {
+      this.currentBoardOverview[i] = i + '';
+    }
+
+    this.setupGame();
+  }
+
+  private setupGame() {
     this.generatePlayers();
+    this.makePlayerComputerIfSinglePlayerGame();
     this.assignRandomPlayerToStart();
   }
 
-  private onSquareClick(selectedRow, selectedColumn) {
+  private onSquareClick(selectedIndex) {
     if (!this.currentPlayer) {
       return;
     }
 
-    if (this.boardStatus[selectedRow * this.boardDimentions + selectedColumn]) {
-      //  Symbols in squares can not be ovewritten.
+    if (this.currentBoardOverview[selectedIndex] === 'O'
+      || this.currentBoardOverview[selectedIndex] === 'X' ) {
+      console.log('Symbols in squares can not be ovewritten.');
       return;
     }
 
-    // Mark the selected square
-    this.boardStatus[selectedRow * this.boardDimentions + selectedColumn] = this.currentPlayer.mark;
+    this.currentBoardOverview[selectedIndex] = this.currentPlayer.mark;
 
     this.onPlayerPlayed({
-    boardStatus: this.boardStatus,
-    selectedColumn,
-    selectedRow,
-    boardDimensions: this.boardDimentions
-  });
+      boardStatus: this.currentBoardOverview,
+      selectedIndex,
+      boardDimensions: this.gameOptions.boardDimentions
+    });
   }
 
   private resetBoard() {
-    this.boardStatus = [];
+    for (let i = 0; i < this.gameOptions.boardDimentions * this.gameOptions.boardDimentions; i++) {
+      this.currentBoardOverview[i] = i + '';
+    }
   }
 
   private generatePlayers() {
     this.playerOne = {
       mark: 'X',
-      wins: 0
+      wins: 0,
+      computer: false
     };
 
     this.playerTwo = {
       mark: 'O',
-      wins: 0
+      wins: 0,
+      computer: false
     };
-
   }
 
-  private onPlayerPlayed(boardCoordinates: IBoardCoordinates) {
-    this.elementsToPaint = this.checkWinConditionsService.checkWinConditions(boardCoordinates);
+  private makePlayerComputerIfSinglePlayerGame() {
+    this.getRandomPlayer().computer = this.isThisAComputerPlayer();
+  }
+
+  private isThisAComputerPlayer(): boolean {
+    return this.gameOptions.numberOfPlayers === 1;
+  }
+
+
+  public onPlayerPlayed(boardCoordinates
+                          :
+                          IBoardCoordinates
+  ) {
+    this.winningGroupIndexes = this.checkWinConditionsService.checkWinConditions(boardCoordinates);
 
     // If someone wins add a point to the total wins reset and the board
-    if (this.elementsToPaint) {
+    if (this.winningGroupIndexes) {
       this.currentPlayer.wins++;
       this.currentPlayer = undefined;
       setTimeout(() => {
@@ -106,7 +130,7 @@ export class BoardConstructorComponent implements OnInit {
     }
 
     // If the game is a draw the starting player is random again
-    if (boardCoordinates.boardStatus.join('').length === (boardCoordinates.boardDimensions * boardCoordinates.boardDimensions)) {
+    if (this.checkWinConditionsService.checkForDraw(boardCoordinates)) {
       setTimeout(() => {
         this.resetBoard();
         this.assignRandomPlayerToStart();
@@ -132,9 +156,31 @@ export class BoardConstructorComponent implements OnInit {
 
   private assignNextPlayer() {
     this.currentPlayer = this.findNextPlayer();
+
+    if (this.currentPlayer.computer) {
+      this.onSquareClick(this.playComputerMove());
+    }
   }
 
   private assignRandomPlayerToStart() {
     this.currentPlayer = this.getRandomPlayer();
+
+    if (this.currentPlayer.computer) {
+      this.onSquareClick(this.playComputerMove());
+    }
+  }
+
+  private playComputerMove(): number {
+    switch (+this.gameOptions.computerLevel) {
+      case 1:
+        return this.easyComputerAIService.getComputerMove(this.currentBoardOverview);
+      case 2:
+        return this.normalComputerAIService.getComputerMove(this.currentBoardOverview);
+      case 3:
+        return this.unbeatableComputerAIService.getComputerMove(this.currentBoardOverview);
+      default:
+        console.error('This computer difficulty level does not exist');
+        return;
+    }
   }
 }

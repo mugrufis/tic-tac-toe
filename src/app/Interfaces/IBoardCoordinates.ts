@@ -1,6 +1,5 @@
 export interface IBoardCoordinates {
   boardStatus: string[];
-  selectedRow: number;
-  selectedColumn: number;
+  selectedIndex: number;
   boardDimensions: number;
 }
